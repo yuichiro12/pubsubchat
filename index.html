@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>websocket emulation test</title>
+</head>
+<body>
+<form action="#" method="GET" id="send"><input type="text" id="msg"><input type="submit"></form>
+<div id="output"></div>
+<script src="//cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
+<script type="text/javascript">
+    var sendmsg = document.getElementById('send');
+    var msg = document.getElementById('msg');
+    var sock = new SockJS('/chat');
+    sock.onopen = function() {
+        console.log('open');
+    };
+    sock.onmessage = function(e) {
+        element = document.createElement('div');
+        element.innerHTML = e.data;
+        document.getElementById('output').appendChild(element);
+    };
+    sock.onerror = function() {
+        console.log('error');
+    };
+    sock.onclose = function() {
+        console.log('close');
+    };
+    sendmsg.onsubmit = function() {
+        sock.send(msg.value);
+        msg.value = "";
+        return false;
+    }
+</script>
+</body>
+</html>

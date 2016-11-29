@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chat</title>
+</head>
+<body>
+    WebSocket Chat Application
+    <form id="chatbox">
+        <input type="text">
+        <input type="submit" value="send">
+    </form>
+    <ul id="messages"></ul>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script>
+        $(function () {
+            var socket = null;
+            var msgBox = $("#chatbox>input:text");
+            var messages = $("#messages");
+            $("#chatbox").submit(function(){
+                if (!msgBox.val()) return false;
+                if (!socket) {
+                    alert("error: WebSocket connection has not opened.");
+                    return false;
+                }
+                socket.send(msgBox.val());
+                msgBox.val("");
+                return false;
+            });
+            if (!window["WebSocket"]) {
+                alert("error: Your Browser doesn't support WebSocket.")
+            } else {
+                socket = new WebSocket("ws://localhost:8080/room");
+                socket.onclose = function() {
+                    alert("WebSocket connection has closed.");
+                }
+                socket.onmessage = function(e) {
+                    messages.append($("<li>").text(e.data));
+                }
+            }
+        });
+    </script>
+</body>
+</html>
